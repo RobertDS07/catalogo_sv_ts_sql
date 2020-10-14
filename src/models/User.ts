@@ -20,8 +20,11 @@ const User = sequelize.define<User>('users', {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
         validate: {
-            isEmail: true
+            isEmail: {
+                msg: 'Email inválido.'
+            }
         }
     },
     password: {
@@ -38,7 +41,7 @@ const User = sequelize.define<User>('users', {
     }
 }, {
     hooks: {
-        beforeCreate: async (User: User) => {
+        beforeSave: async (User: User) => {
             User.password = await bcrypt.hash(User.password, 10)
         }
     }

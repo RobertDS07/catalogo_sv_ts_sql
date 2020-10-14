@@ -1,0 +1,36 @@
+import User from "../../../models/User"
+import createToken from "../../../utils/createToken"
+import verifyData from "../../../utils/verifyData"
+
+interface createUser {
+    data: {
+        name: string
+        email: string
+        password: string
+    }
+}
+
+export const resolvers = {
+    createUser: async ({ data }: createUser) => {
+        try {
+            verifyData<typeof data>(data)
+
+            if (data.password.length < 5) throw new Error('Senha deve conter 5 caracteres.')
+
+            const [user, created] = await User.findOrCreate({ where: { email: data.email }, defaults: { password: data.password, name: data.name } })
+
+            if (!created) throw new Error('Este email já esta em uso.')
+
+            const toGenerateToken = {
+                id: user.id,
+                admin: user.isAdmin
+            }
+
+            const token = createToken(toGenerateToken)
+
+            return token
+        } catch (e) {
+            return e
+        }
+    }
+}

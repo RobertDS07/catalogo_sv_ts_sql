@@ -1,4 +1,5 @@
 node_modules
-/src/config
 /dist
-__test__
+.env
+.env.test
+/__test__/database.sqlite
