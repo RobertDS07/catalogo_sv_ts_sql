@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize'
 import bcrypt from 'bcryptjs'
 import sequelize from '../database'
+import Store from './Store'
 
 interface User extends Model {
     id: number
@@ -10,6 +11,10 @@ interface User extends Model {
     email: string
     password: string
     isAdmin: boolean
+    storeId?: number
+    store?: {
+        storeNameToLink: string
+    }
 }
 
 const User = sequelize.define<User>('users', {
@@ -32,7 +37,7 @@ const User = sequelize.define<User>('users', {
         allowNull: false,
         validate: {
             len: [5, 40]
-        }
+        },
     },
     isAdmin: {
         type: DataTypes.BOOLEAN,
@@ -42,9 +47,16 @@ const User = sequelize.define<User>('users', {
 }, {
     hooks: {
         beforeSave: async (User: User) => {
+            if(!!User.storeId) User.isAdmin = true
             User.password = await bcrypt.hash(User.password, 10)
+        },
+        beforeCreate: (User: User) => {
+            User.email = User.email.trim()
         }
     }
 })
+
+User.belongsTo(Store)
+Store.hasMany(User)
 
 export default User

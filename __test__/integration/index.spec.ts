@@ -1,9 +1,55 @@
-import { resolvers } from '../../src/graphql/modules/register/resolvers'
-import { resolvers as resolversLogin } from '../../src/graphql/modules/login/resolvers'
+import { resolvers } from '../../src/graphql/modules/user/resolvers'
 import User from '../../src/models/User'
 
-const { createUser } = resolvers
-const { login } = resolversLogin
+const { createUser, login } = resolvers
+
+describe('Stores', () => {
+    it('Should create two stores', () => {
+
+    })
+    it('Should return all storeNameToLink avaiable on db', () => {
+
+    })
+    it('Should return all data of one store that i define with storeNameToLink', () => {
+
+    })
+})
+
+describe('Admin', () => {
+    it('Should create a admin for a store', () => {
+
+    })
+    it('Should do a login and return a token, the token must contain storeNameToLink, isAdmin and id', () => {
+
+    })
+    it('Should send storeNameToLink and token, if token pass in first verify AND contains the isAdmin and storeNameToLink(token) it will verify if the storeNameToLink of request matches with the same of the token, this test will return true', () => {
+
+    })
+    it('Should do the same of the last test, but will throw a error beacause the user arent admin of this store', () => {
+
+    })
+    it('Should create a product, the request must contain token and obviously data of product', () => {
+
+    })
+    it('Should return a error if the token is invalid', () => {
+
+    })
+})
+
+describe('Products', () => {
+    it('Should return products of a specified store', () => {
+
+    })
+    it('Should return the same products but sorted', () => {
+
+    })
+    it('Should return products with pagination, the first 10 products and after more 10', () => {
+
+    })
+    it('Should return a product with i search', () => {
+
+    })
+})
 
 describe('Users', () => {
     describe('Register', () => {
@@ -52,7 +98,7 @@ describe('Users', () => {
             }
             expect(await login(data)).toStrictEqual(Error('Credenciais inválidas.'))
         })
-        it('Should return a token if correct login', async() => {
+        it('Should return a token if correct login', async () => {
             const data = {
                 data: {
                     email: 'robert@gmail.com',
@@ -64,6 +110,6 @@ describe('Users', () => {
     })
 })
 
-afterAll(async() => {
-    await User.destroy({truncate: true, force: true})
+afterAll(async () => {
+    await User.destroy({ truncate: true, force: true })
 })

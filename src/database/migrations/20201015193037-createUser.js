@@ -40,6 +40,13 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
+      },
+      storeId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: { model: 'stores', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       }
     });
   },
