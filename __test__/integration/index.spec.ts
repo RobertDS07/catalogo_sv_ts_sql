@@ -1,17 +1,27 @@
-import { resolvers } from '../../src/graphql/modules/user/resolvers'
+import { resolvers } from '../../src/graphql/modules/users/resolvers'
+import { resolvers as storeResolvers } from '../../src/graphql/modules/stores/resolvers'
+import Store from '../../src/models/Store'
 import User from '../../src/models/User'
 
 const { createUser, login } = resolvers
+const { storeNamesToLink, storeInfo } = storeResolvers
 
 describe('Stores', () => {
-    it('Should create two stores', () => {
+    it('Should create a store', async () => {
+        const store1 = await Store.create({storeNameToLink: 'loja1', logoLink:'logo', instaLink: 'instalink', insta: 'insta', whats: 'whats', whatsLinkToMsg: 'whatsLink'})
+        const store2 = await Store.create({storeNameToLink: 'loja2', logoLink:'logo2', instaLink: 'instalink2', insta: 'insta2', whats: 'whats2', whatsLinkToMsg: 'whatsLink2'})
 
+        expect(store1).toHaveProperty('storeNameToLink')
+        expect(store2).toHaveProperty('storeNameToLink')
     })
-    it('Should return all storeNameToLink avaiable on db', () => {
-
+    it('Should return all storeNameToLink avaiable on db', async () => {
+        expect(await storeNamesToLink()).toHaveLength(2)        
     })
-    it('Should return all data of one store that i define with storeNameToLink', () => {
-
+    it('Should return all data of one store that i define with storeNameToLink', async () => {
+        expect(await storeInfo('loja1')).toHaveProperty('storeNameToLink', 'loja1')
+    })
+    it('Should return a error, only to test ;)', async () => {
+        expect(await storeInfo('loja1')).toStrictEqual(Error('Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.'))
     })
 })
 
@@ -112,4 +122,5 @@ describe('Users', () => {
 
 afterAll(async () => {
     await User.destroy({ truncate: true, force: true })
+    await Store.destroy({ truncate: true, force: true })
 })

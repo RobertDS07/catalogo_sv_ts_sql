@@ -6,7 +6,7 @@
   "scripts": {
     "pretest": "NODE_ENV=test yarn sequelize db:migrate",
     "test": "NODE_ENV=test jest",
-    "posttest": "NODE_ENV=test yarn sequelize db:migrate:undo",
+    "posttest": "NODE_ENV=test yarn sequelize db:migrate:undo:all",
     "build": "tsc",
     "dev": "nodemon dist/index.js",
     "start": "node dist/index.js"
