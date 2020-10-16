@@ -41,10 +41,10 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
-      storeId: {
-        type: Sequelize.INTEGER,
+      storeName: {
+        type: Sequelize.STRING,
         allowNull: true,
-        references: { model: 'stores', key: 'id' },
+        references: { model: 'stores', key: 'storeNameToLink' },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       }

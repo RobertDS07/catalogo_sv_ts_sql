@@ -1,32 +1,44 @@
 import { resolvers } from '../../src/graphql/modules/users/resolvers'
 import { resolvers as storeResolvers } from '../../src/graphql/modules/stores/resolvers'
+
+import sequelize from '../../src/database'
+
 import Store from '../../src/models/Store'
 import User from '../../src/models/User'
+import Product from '../../src/models/Product'
 
 const { createUser, login } = resolvers
 const { storeNamesToLink, storeInfo } = storeResolvers
 
+beforeAll(async () => {
+    await sequelize.sync({ force: true })
+})
+
 describe('Stores', () => {
     it('Should create a store', async () => {
-        const store1 = await Store.create({storeNameToLink: 'loja1', logoLink:'logo', instaLink: 'instalink', insta: 'insta', whats: 'whats', whatsLinkToMsg: 'whatsLink'})
-        const store2 = await Store.create({storeNameToLink: 'loja2', logoLink:'logo2', instaLink: 'instalink2', insta: 'insta2', whats: 'whats2', whatsLinkToMsg: 'whatsLink2'})
+        const store1 = await Store.create({ storeNameToLink: 'loja1', logoLink: 'logo', instaLink: 'instalink', insta: 'insta', whats: 'whats', whatsLinkToMsg: 'whatsLink' })
+        const store2 = await Store.create({ storeNameToLink: 'loja2', logoLink: 'logo2', instaLink: 'instalink2', insta: 'insta2', whats: 'whats2', whatsLinkToMsg: 'whatsLink2' })
 
         expect(store1).toHaveProperty('storeNameToLink')
         expect(store2).toHaveProperty('storeNameToLink')
     })
     it('Should return all storeNameToLink avaiable on db', async () => {
-        expect(await storeNamesToLink()).toHaveLength(2)        
+        expect(await storeNamesToLink()).toHaveLength(2)
     })
     it('Should return all data of one store that i define with storeNameToLink', async () => {
         expect(await storeInfo('loja1')).toHaveProperty('storeNameToLink', 'loja1')
     })
     it('Should return a error, only to test ;)', async () => {
-        expect(await storeInfo('loja1')).toStrictEqual(Error('Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.'))
+        expect(await storeInfo('loja11')).toStrictEqual(Error('Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.'))
     })
 })
 
 describe('Admin', () => {
-    it('Should create a admin for a store', () => {
+    it('Should create a admin for a store', async () => {
+        const userAdmin = await User.create({ storeName: 'loja1', name: 'robert', email: 'roberta@gmail.com', password: '123456' })
+
+        const a = await User.findAll({include: Store})
+        console.log(a);
 
     })
     it('Should do a login and return a token, the token must contain storeNameToLink, isAdmin and id', () => {
@@ -118,9 +130,4 @@ describe('Users', () => {
             expect(await login(data)).toHaveProperty('token')
         })
     })
-})
-
-afterAll(async () => {
-    await User.destroy({ truncate: true, force: true })
-    await Store.destroy({ truncate: true, force: true })
 })

@@ -11,7 +11,7 @@ interface User extends Model {
     email: string
     password: string
     isAdmin: boolean
-    storeId?: number
+    storeName?: string
     store?: {
         storeNameToLink: string
     }
@@ -47,7 +47,7 @@ const User = sequelize.define<User>('users', {
 }, {
     hooks: {
         beforeSave: async (User: User) => {
-            if(!!User.storeId) User.isAdmin = true
+            if(!!User.storeName) User.isAdmin = true
             User.password = await bcrypt.hash(User.password, 10)
         },
         beforeCreate: (User: User) => {
