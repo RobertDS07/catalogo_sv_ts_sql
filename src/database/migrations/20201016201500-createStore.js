@@ -3,11 +3,17 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('stores', {
-      id: {
-        type: Sequelize.INTEGER,
+      storeNameToLink: {
+        type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
         primaryKey: true,
-        autoIncrement: true
+        validate: {
+          is: {
+            args: '^[a-zA-Z0-9_]+$',
+            msg: 'Nome deve ser sem espaços!'
+          }
+        }
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -16,17 +22,6 @@ module.exports = {
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false
-      },
-      storeNameToLink: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-          is: {
-            args: '^[a-zA-Z0-9_]+$',
-            msg: 'Nome deve ser sem espaços!'
-          }
-        }
       },
       logoLink: {
         type: Sequelize.STRING,

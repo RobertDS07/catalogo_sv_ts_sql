@@ -35,9 +35,9 @@ describe('Stores', () => {
 
 describe('Admin', () => {
     it('Should create a admin for a store', async () => {
-        const userAdmin = await User.create({ storeName: 'loja1', name: 'robert', email: 'roberta@gmail.com', password: '123456' })
+        const userAdmin = await Product.create({ storeName: 'loja1', name: 'robert', category: 'roberta@gmail.com', size:'oiasdas', price: 2, fotourl: 'fotourl'})
 
-        const a = await User.findAll({include: Store})
+        const a = await Product.findAll({include: Store})
         console.log(a);
 
     })

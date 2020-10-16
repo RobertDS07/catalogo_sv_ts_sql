@@ -47,7 +47,7 @@ const User = sequelize.define<User>('users', {
 }, {
     hooks: {
         beforeSave: async (User: User) => {
-            if(!!User.storeName) User.isAdmin = true
+            if (!!User.storeName) User.isAdmin = true
             User.password = await bcrypt.hash(User.password, 10)
         },
         beforeCreate: (User: User) => {
@@ -56,7 +56,7 @@ const User = sequelize.define<User>('users', {
     }
 })
 
-User.belongsTo(Store)
-Store.hasMany(User)
+User.belongsTo(Store, { foreignKey: 'storeName'})
+Store.hasMany(User, { foreignKey: 'storeName'})
 
 export default User

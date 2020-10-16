@@ -17,6 +17,13 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false
       },
+      storeName: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        references: { model: 'stores', key: 'storeNameToLink' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: false
@@ -40,13 +47,6 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
-      },
-      storeName: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        references: { model: 'stores', key: 'storeNameToLink' },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
       }
     });
   },

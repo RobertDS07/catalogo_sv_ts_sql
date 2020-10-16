@@ -48,7 +48,7 @@ const Product = sequelize.define<Product>('products', {
     }
 })
 
-Product.belongsTo(Store)
-Store.hasMany(Product)
+Product.belongsTo(Store, { foreignKey: 'storeName'})
+Store.hasMany(Product, { foreignKey: 'storeName'})
 
 export default Product

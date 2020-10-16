@@ -2,10 +2,9 @@ import { DataTypes, Model } from 'sequelize'
 import sequelize from '../database'
 
 interface store extends Model {
-    id: number
+    storeNameToLink: string
     createdAt: Date
     updatedAt: Date
-    storeNameToLink: string
     logoLink: string
     instaLink: string
     insta: string
@@ -18,6 +17,7 @@ const Store = sequelize.define<store>('stores', {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+        primaryKey: true,
         validate: {
             is: {
                 args: '^[a-zA-Z0-9_]+$',
