@@ -6,10 +6,11 @@ import sequelize from '../../src/database'
 
 import Store from '../../src/models/Store'
 import User from '../../src/models/User'
+import Product from '../../src/models/Product'
 
 const { createUser, login, verifyToken } = resolvers
 const { storeNamesToLink, storeInfo } = storeResolvers
-const { createProduct } = productsResolvers
+const { createProduct, updateProduct, deleteProduct } = productsResolvers
 
 beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -79,13 +80,59 @@ describe('Admin', () => {
         expect(await createProduct({ storeName, token, data })).toBeTruthy()
     })
     it('Should update a product', async () => {
+        const storeName = 'loja1'
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJhZG1pbiI6dHJ1ZSwic3RvcmVOYW1lIjoibG9qYTEifSwiaWF0IjoxNjAyOTUyMDIzLCJleHAiOjE2MzQ0ODgwMjN9.PRTCR9EnPmrmgvT_1bBntXHxN9EQ5v8R5l2tz0NW2e8'
+        const data = {
+            name: 'name',
+            category: 'category',
+            size: 'size',
+            price: 3,
+            fotourl: 'fotourl'
+        }
+        const product = await Product.create({storeName:'loja1', ...data})
+        const productId = product.id
+        const dataUpdate = {
+            name: 'nameUpdated',
+            price: 333
+        }
 
+        expect(await updateProduct({storeName, token, id: productId, data:dataUpdate})).toBeTruthy()
+
+        expect(await Product.findByPk(productId)).toHaveProperty('name', 'nameupdated')
     })
     it('Should delete a product', async () => {
+        const storeName = 'loja1'
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJhZG1pbiI6dHJ1ZSwic3RvcmVOYW1lIjoibG9qYTEifSwiaWF0IjoxNjAyOTUyMDIzLCJleHAiOjE2MzQ0ODgwMjN9.PRTCR9EnPmrmgvT_1bBntXHxN9EQ5v8R5l2tz0NW2e8'
+        const productId = 1
 
+        expect(await deleteProduct({storeName, token, id: productId})).toBeTruthy()
+        expect(await Product.findByPk(1)).toBeFalsy()
     })
     it('Should create a lot of products for others tests', async () => {
+        const storeName1 = 'loja1'
+        const storeName2 = 'loja2'
+        const token1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJhZG1pbiI6dHJ1ZSwic3RvcmVOYW1lIjoibG9qYTEifSwiaWF0IjoxNjAyOTUyMDIzLCJleHAiOjE2MzQ0ODgwMjN9.PRTCR9EnPmrmgvT_1bBntXHxN9EQ5v8R5l2tz0NW2e8'
+        const token2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyLCJhZG1pbiI6dHJ1ZSwic3RvcmVOYW1lIjoibG9qYTIifSwiaWF0IjoxNjAyOTU0MTU2LCJleHAiOjE2MzQ0OTAxNTZ9.3-Sn41E_vmOuJLhZA_xN-k9-mOjQ2GO7x9GJldin2pE'
+        const data1 = {
+            name: 'name1',
+            category: 'category',
+            size: 'size',
+            price: 3,
+            fotourl: 'fotourl'
+        }
+        const data2 ={
+            name: 'name2',
+            category: 'category',
+            size: 'size',
+            price: 3,
+            fotourl: 'fotourl',
+            description: 'description'
+        }
 
+        for (let x = 0; x < 3; x++) {
+            await createProduct({storeName:storeName1, token: token1, data:data1})
+            await createProduct({storeName:storeName2, token: token2, data:data2})
+        }
     })
     it('Should return a error if the token is invalid (this test is very very for security, hardest with it)', async () => {
         const storeName = 'loja1'
@@ -103,13 +150,10 @@ describe('Admin', () => {
 })
 
 describe('Products', () => {
-    it('Should return products of a specified store', () => {
+    it('Should return products of a specified store with pagination', () => {
 
     })
     it('Should return the same products but sorted', () => {
-
-    })
-    it('Should return products with pagination, the first 10 products and after more 10', () => {
 
     })
     it('Should return a product with i search', () => {

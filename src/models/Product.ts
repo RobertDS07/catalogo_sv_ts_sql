@@ -3,6 +3,7 @@ import sequelize from '../database'
 import Store from './Store'
 
 interface Product extends Model {
+    id: number
     storeName: string
     fotourl: string
     name: string
