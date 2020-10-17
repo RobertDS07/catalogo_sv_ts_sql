@@ -1,6 +1,7 @@
 export const schema = `
 type Query {
     login(data: loginInput): Token
+    verifyToken(storeName: String, token: String!): VerifyToken
 }
 
 type Mutation {
@@ -20,5 +21,9 @@ input createUserInput {
 
 type Token {
     token: String!
+}
+
+type VerifyToken {
+    admin: Boolean!
 }
 `

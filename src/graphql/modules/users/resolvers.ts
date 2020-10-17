@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 
 import User from "../../../models/User"
 import createToken from "../../../utils/createToken"
+import verifyToken from "../../../utils/verifyToken"
 import verifyData from "../../../utils/verifyData"
 
 interface login {
@@ -17,6 +18,11 @@ interface createUser {
         email: string
         password: string
     }
+}
+
+interface verifyToken {
+    storeName?: string
+    token: string
 }
 
 export const resolvers = {
@@ -52,14 +58,24 @@ export const resolvers = {
 
             const toGenerateToken = {
                 id: user.id,
-                admin: user.isAdmin
+                admin: user.isAdmin,
+                storeName: user.storeName
             }
-
+            
             const token = createToken(toGenerateToken)
 
             return token
         } catch(e) {
             return e
         }
+    },
+    verifyToken: async ({storeName, token}: verifyToken) => {
+        const verifiedToken = await verifyToken(token)
+
+        if(!verifiedToken) return false
+        
+        verifiedToken.user.storeName === storeName ? verifiedToken.user.admin = true : verifiedToken.user.admin = false
+
+        return verifiedToken
     }
 }

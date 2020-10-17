@@ -12,7 +12,7 @@ describe('utils', () => {
                 email: 'robertdamaceno@gmail.com',
                 password: ''
             }
-            expect(() => veirifyData<data>(data)).toThrowError(Error('Preencha todo os campos!'))
+            expect(() => veirifyData<data>(data)).toThrowError(Error('Preencha todos os campos obrigatórios!'))
         })
         it('Should not return a error with same function to verifyData', () => {
             interface data {
