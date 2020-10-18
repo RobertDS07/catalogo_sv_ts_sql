@@ -10,7 +10,7 @@ import Product from '../../src/models/Product'
 
 const { createUser, login, verifyToken } = resolvers
 const { storeNamesToLink, storeInfo } = storeResolvers
-const { createProduct, updateProduct, deleteProduct } = productsResolvers
+const { createProduct, updateProduct, deleteProduct, getProducts } = productsResolvers
 
 beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -84,19 +84,19 @@ describe('Admin', () => {
         const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJhZG1pbiI6dHJ1ZSwic3RvcmVOYW1lIjoibG9qYTEifSwiaWF0IjoxNjAyOTUyMDIzLCJleHAiOjE2MzQ0ODgwMjN9.PRTCR9EnPmrmgvT_1bBntXHxN9EQ5v8R5l2tz0NW2e8'
         const data = {
             name: 'name',
-            category: 'category',
+            category: 'aaaaaasdasdas',
             size: 'size',
             price: 3,
             fotourl: 'fotourl'
         }
-        const product = await Product.create({storeName:'loja1', ...data})
+        const product = await Product.create({ storeName: 'loja1', ...data })
         const productId = product.id
         const dataUpdate = {
             name: 'nameUpdated',
             price: 333
         }
 
-        expect(await updateProduct({storeName, token, id: productId, data:dataUpdate})).toBeTruthy()
+        expect(await updateProduct({ storeName, token, id: productId, data: dataUpdate })).toBeTruthy()
 
         expect(await Product.findByPk(productId)).toHaveProperty('name', 'nameupdated')
     })
@@ -105,7 +105,7 @@ describe('Admin', () => {
         const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJhZG1pbiI6dHJ1ZSwic3RvcmVOYW1lIjoibG9qYTEifSwiaWF0IjoxNjAyOTUyMDIzLCJleHAiOjE2MzQ0ODgwMjN9.PRTCR9EnPmrmgvT_1bBntXHxN9EQ5v8R5l2tz0NW2e8'
         const productId = 1
 
-        expect(await deleteProduct({storeName, token, id: productId})).toBeTruthy()
+        expect(await deleteProduct({ storeName, token, id: productId })).toBeTruthy()
         expect(await Product.findByPk(1)).toBeFalsy()
     })
     it('Should create a lot of products for others tests', async () => {
@@ -117,21 +117,20 @@ describe('Admin', () => {
             name: 'name1',
             category: 'category',
             size: 'size',
-            price: 3,
             fotourl: 'fotourl'
         }
-        const data2 ={
+        const data2 = {
             name: 'name2',
-            category: 'category',
+            category: 'otherCategory',
             size: 'size',
             price: 3,
             fotourl: 'fotourl',
             description: 'description'
         }
 
-        for (let x = 0; x < 3; x++) {
-            await createProduct({storeName:storeName1, token: token1, data:data1})
-            await createProduct({storeName:storeName2, token: token2, data:data2})
+        for (let x = 0; x < 20; x++) {
+            await createProduct({ storeName: storeName1, token: token1, data: { ...data1, price: x } })
+            await createProduct({ storeName: storeName2, token: token2, data: data2 })
         }
     })
     it('Should return a error if the token is invalid (this test is very very for security, hardest with it)', async () => {
@@ -150,14 +149,98 @@ describe('Admin', () => {
 })
 
 describe('Products', () => {
-    it('Should return products of a specified store with pagination', () => {
+    it('Should return products of a specified store with pagination', async () => {
+        const storeName = 'loja1'
+        const limit = 10
+        const offset = 0
 
+        const expected = await getProducts({ storeName, limit, offset })
+
+        expect(expected).toHaveProperty('products')
+        expect(expected.products).toHaveLength(10)
     })
-    it('Should return the same products but sorted', () => {
+    it('Should return others 10 products', async () => {
+        const storeName = 'loja1'
+        const limit = 10
+        const offset = 10
 
+        const { products } = await getProducts({ storeName, limit, offset: 0 })
+
+        const others10Itens = await getProducts({ storeName, limit, offset })
+
+        expect(others10Itens.products).not.toEqual(products)
     })
-    it('Should return a product with i search', () => {
+    it('Should return the same products but sorted', async () => {
+        interface products {
+            price: number
+        }
 
+        interface getProducts {
+            counts: number
+            products: [products]
+        }
+
+        const storeName = 'loja1'
+        const limit = 10
+        const offset = 0
+        const sort = 'ASC'
+
+        const sortedProducts: getProducts = await getProducts({ storeName, limit, offset, sort })
+
+        const { products } = sortedProducts
+
+        let lastNumber = -20
+
+        let expected
+
+        products.forEach(e => {
+            if (e.price > lastNumber) expected = true
+
+
+            lastNumber = e.price
+        })
+
+        expect(expected).toBeTruthy()
+    })
+    it('Should return a product with i search', async () => {
+        const storeName = 'loja1'
+        const limit = 10
+        const offset = 0
+        await Product.create({
+            storeName: 'loja1',
+            name: 'name232',
+            category: 'category',
+            size: 'size',
+            price: 3,
+            fotourl: 'fotourl',
+            description: 'description'
+        })
+
+        const { products } = await getProducts({ storeName, limit, offset, search: 'name232' })
+
+        expect(products[0]).toHaveProperty('name', 'name232')
+    })
+    it('Should return a products of specified category', async () => {
+        interface products {
+            category: string
+        }
+
+        interface getProducts {
+            counts: number
+            products: [products]
+        }
+
+        const storeName = 'loja2'
+        const limit = 10
+        const offset = 0
+
+        const getAllProducts: getProducts = await getProducts({ storeName, limit, offset, category: 'otherCategory' })
+
+        const { products } = getAllProducts
+
+        const expected = products.every(e => e.category === 'othercategory')
+
+        expect(expected).toBeTruthy()
     })
 })
 

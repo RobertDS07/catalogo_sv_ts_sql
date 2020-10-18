@@ -1,6 +1,10 @@
 import { buildSchema } from "graphql";
 
 const schema = buildSchema(`
+    type Query {
+        getProducts(storeName: String! offSet: Int! limit: Int! sort: String search: String category: String): Products!
+    }
+
     type Mutation {
         createProduct(storeName: String! token: String! data: createProductInput!): Boolean!
         updateProduct(storeName: String! token: String! id:Int! data: updateProductInput!): Boolean!
@@ -23,5 +27,20 @@ const schema = buildSchema(`
         category: String
         price: Float
         description: String
+    }
+
+    type Product {
+        id: Int
+        fotourl: String
+        name: String
+        size: String
+        category: String
+        price: Float
+        description: String
+    }
+
+    type Products {
+        count: Int!
+        products: [Product!]!
     }
 `)

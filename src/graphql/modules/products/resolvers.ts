@@ -4,6 +4,15 @@ import Product from "../../../models/Product"
 import verifyData from "../../../utils/verifyData"
 import verifyToken from "../../../utils/verifyToken"
 
+interface getProducts {
+    storeName: string
+    offset: number
+    limit: number
+    search?: string
+    sort?: string
+    category?: string
+}
+
 interface createProduct {
     storeName: string
     token: string
@@ -38,6 +47,24 @@ interface deleteProduct {
 }
 
 export const resolvers = {
+    getProducts: async ({ storeName, offset, limit, search, sort, category }: getProducts) => {
+        try {
+            if (!!search) search = search.trim().toLocaleLowerCase()
+            if (!!category) category = category.trim().toLocaleLowerCase()
+
+            if (!category) {
+                const { rows: products, count } = !sort ? !search ? await Product.findAndCountAll({ where: { storeName }, offset, limit, order: [['category', 'ASC']] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: search } }] }, offset, limit, order: [['category', 'ASC']] }) : !search ? await Product.findAndCountAll({ where: { storeName }, offset, limit, order: [['price', sort]] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: search } }, { category }] }, offset, limit, order: [['price', sort]] })
+
+                return { products, count }
+            }
+            const { rows: products, count } = !sort ? !search ? await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }] }, offset, limit, order: [['category', 'ASC']] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }, { name: { [Op.like]: search } }] }, offset, limit, order: [['category', 'ASC']] }) : !search ? await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }] }, offset, limit, order: [['price', sort]] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }, { name: { [Op.like]: search } }, { category }] }, offset, limit, order: [['price', sort]] })
+
+            return { products, count }
+        } catch (e) {
+            if (!!e) e = new Error('Ocorreu um erro, tente novamente, se persistire contate o dono do site.')
+            return e
+        }
+    },
     createProduct: async ({ storeName, token, data }: createProduct) => {
         try {
             const verifiedToken = await verifyToken(token)
