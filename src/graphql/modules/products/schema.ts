@@ -1,8 +1,8 @@
 import { buildSchema } from "graphql";
 
-const schema = buildSchema(`
+export const schema = buildSchema(`
     type Query {
-        getProducts(storeName: String! offSet: Int! limit: Int! sort: String search: String category: String): Products!
+        getProducts(storeName: String! offset: Int! limit: Int! sort: String search: String category: String): Products!
     }
 
     type Mutation {

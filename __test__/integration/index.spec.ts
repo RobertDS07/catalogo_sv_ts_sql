@@ -28,10 +28,10 @@ describe('Stores', () => {
         expect(await storeNamesToLink()).toHaveLength(2)
     })
     it('Should return all data of one store that i define with storeNameToLink', async () => {
-        expect(await storeInfo('loja1')).toHaveProperty('storeNameToLink', 'loja1')
+        expect(await storeInfo({storeName: 'loja1'})).toHaveProperty('storeNameToLink', 'loja1')
     })
     it('Should return a error, only to test ;)', async () => {
-        expect(await storeInfo('loja11')).toStrictEqual(Error('Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.'))
+        expect(await storeInfo({storeName: 'loja11'})).toStrictEqual(Error('Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.'))
     })
 })
 

@@ -51,9 +51,8 @@ export const resolvers = {
         try {
             if (!!search) search = search.trim().toLocaleLowerCase()
             if (!!category) category = category.trim().toLocaleLowerCase()
-
             if (!category) {
-                const { rows: products, count } = !sort ? !search ? await Product.findAndCountAll({ where: { storeName }, offset, limit, order: [['category', 'ASC']] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: search } }] }, offset, limit, order: [['category', 'ASC']] }) : !search ? await Product.findAndCountAll({ where: { storeName }, offset, limit, order: [['price', sort]] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: search } }, { category }] }, offset, limit, order: [['price', sort]] })
+                const { rows: products, count } = !sort ? !search ? await Product.findAndCountAll({ where: { storeName }, order: [['category', 'ASC']], offset, limit }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: search } }] }, offset, limit, order: [['category', 'ASC']] }) : !search ? await Product.findAndCountAll({ where: { storeName }, offset, limit, order: [['price', sort]] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: search } }, { category }] }, offset, limit, order: [['price', sort]] })
 
                 return { products, count }
             }
