@@ -3,6 +3,7 @@ import { buildSchema } from "graphql";
 export const schema = buildSchema(`
     type Query {
         getProducts(storeName: String! offset: Int! limit: Int! sort: String search: String category: String): Products!
+        getCategories( storeName: String! ): [ProductsOnlyCategories!]!
     }
 
     type Mutation {
@@ -42,5 +43,9 @@ export const schema = buildSchema(`
     type Products {
         count: Int!
         products: [Product!]!
+    }
+
+    type ProductsOnlyCategories {
+        category: String!
     }
 `)

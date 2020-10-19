@@ -10,7 +10,7 @@ import Product from '../../src/models/Product'
 
 const { createUser, login, verifyToken } = resolvers
 const { storeNamesToLink, storeInfo } = storeResolvers
-const { createProduct, updateProduct, deleteProduct, getProducts } = productsResolvers
+const { createProduct, updateProduct, deleteProduct, getProducts, getCategories } = productsResolvers
 
 beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -127,6 +127,8 @@ describe('Admin', () => {
             fotourl: 'fotourl',
             description: 'description'
         }
+        //creating a new product here to test if when i call getCategories of loja2 will return 2 strings
+        await createProduct({ storeName: storeName2, token: token2, data: {...data2, category:'category'} })
 
         for (let x = 0; x < 20; x++) {
             await createProduct({ storeName: storeName1, token: token1, data: { ...data1, price: x } })
@@ -241,6 +243,9 @@ describe('Products', () => {
         const expected = products.every(e => e.category === 'othercategory')
 
         expect(expected).toBeTruthy()
+    })
+    it('Should return all categories of loja2', async () => {
+        expect(await getCategories({storeName: 'loja2'})).toHaveLength(2)
     })
 })
 
