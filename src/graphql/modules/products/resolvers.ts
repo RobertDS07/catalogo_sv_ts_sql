@@ -50,22 +50,35 @@ interface getCategories {
     storeName: string
 }
 
+interface getProduct {
+    storeName: string
+    id: number
+}
+
 export const resolvers = {
     getProducts: async ({ storeName, offset, limit, search, sort, category }: getProducts) => {
         try {
             if (!!search) search = search.trim().toLocaleLowerCase()
             if (!!category) category = category.trim().toLocaleLowerCase()
+            if (!search) search = ''
 
-            if (!category) {
-                const { rows: products, count } = !sort ? !search ? await Product.findAndCountAll({ where: { storeName }, order: [['id', 'DESC']], offset, limit }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['id', 'DESC']] }) : !search ? await Product.findAndCountAll({ where: { storeName }, offset, limit, order: [['price', sort]] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['price', sort]] })
-
-                return { products, count }
-            }
-            const { rows: products, count } = !sort ? !search ? await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }] }, offset, limit, order: [['id', 'DESC']] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['id', 'DESC']] }) : !search ? await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }] }, offset, limit, order: [['price', sort]] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }, { name: { [Op.like]: `%${search}%` } }, { category }] }, offset, limit, order: [['price', sort]] })
+            const { rows: products, count } = !sort ? !category ? await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['id', 'DESC']] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['id', 'DESC']] }) : !category ? await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['price', sort]] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }, { name: { [Op.like]: `%${search}%` } }, { category }] }, offset, limit, order: [['price', sort]] })
 
             return { products, count }
         } catch (e) {
-            if (!!e) e = new Error('Ocorreu um erro, tente novamente, se persistire contate o dono do site.')
+            if (!!e) e = new Error('Ocorreu um erro, tente novamente, se persistir contate o dono do site.')
+            return e
+        }
+    },
+    getProduct: async ({ id, storeName }: getProduct) => {
+        try {
+            const product = Product.findOne({ where: { [Op.and]: [{ id }, { storeName }] } })
+
+            if(!product) throw new Error('')
+
+            return product
+        } catch (e) {
+            if (!!e) e = new Error('Ocorreu um erro, tente novamente, se persistir contate o dono do site.')
             return e
         }
     },
