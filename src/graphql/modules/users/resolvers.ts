@@ -20,6 +20,16 @@ interface createUser {
     }
 }
 
+interface createAdmin {
+    auth: string
+    data: {
+        name: string
+        email: string
+        password: string
+        storeName: string
+    }
+}
+
 interface verifyToken {
     storeName?: string
     token: string
@@ -76,6 +86,19 @@ export const resolvers = {
         
         verifiedToken.user.storeName === storeName ? verifiedToken.user.admin = true : verifiedToken.user.admin = false
 
-        return verifiedToken
+        return verifiedToken.user
+    },
+    createAdmin: async ({ data, auth }: createAdmin) => {
+        try {
+            if (auth !== process.env.CREATE_AUTH) return false
+
+            const created = User.create({ ...data })
+
+            if (!created) throw new Error('Houve algo errado ao criar')
+
+            return true
+        } catch (e) {
+            return e
+        }
     }
 }

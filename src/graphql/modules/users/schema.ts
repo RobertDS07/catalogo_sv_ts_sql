@@ -6,6 +6,7 @@ type Query {
 
 type Mutation {
     createUser(data: createUserInput) : Token!
+    createAdmin(data: createAdminInput auth: String!): Boolean!
 }
 
 input loginInput{
@@ -17,6 +18,13 @@ input createUserInput {
     name: String!
     email: String!
     password: String!
+}
+
+input createAdminInput {
+    name: String!
+    email: String!
+    password: String!
+    storeName: String!
 }
 
 type Token {
