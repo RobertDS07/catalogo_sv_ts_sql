@@ -33,6 +33,7 @@
             }
          ],
          "no-redeclare": "off",
-         "no-unused-vars": "off"
+         "no-unused-vars": "off",
+         "no-restricted-syntax": "off"
     }
 }
