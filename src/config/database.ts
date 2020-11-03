@@ -11,6 +11,6 @@ module.exports = {
     storage: './__test__/database.sqlite',
     logging: false,
     define: {
-        timestamps: true
+        timestamps: true,
     },
 }

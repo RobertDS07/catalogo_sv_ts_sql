@@ -17,46 +17,52 @@ interface User extends Model {
     }
 }
 
-const User = sequelize.define<User>('users', {
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: {
-                msg: 'Email inválido.'
-            }
-        }
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-            len: [5, 40]
+const User = sequelize.define<User>(
+    'users',
+    {
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            validate: {
+                isEmail: {
+                    msg: 'Email inválido.',
+                },
+            },
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                len: [5, 40],
+            },
+        },
+        isAdmin: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
         },
     },
-    isAdmin: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-    }
-}, {
-    hooks: {
-        beforeSave: async (User: User) => {
-            if (!!User.storeName) User.isAdmin = true
-            User.password = await bcrypt.hash(User.password, 10)
+    {
+        hooks: {
+            beforeSave: async (user: User) => {
+                const userSaved = user
+                if (userSaved.storeName) userSaved.isAdmin = true
+                userSaved.password = await bcrypt.hash(userSaved.password, 10)
+            },
+            beforeCreate: (user: User) => {
+                const newUser = user
+                newUser.email = newUser.email.trim()
+            },
         },
-        beforeCreate: (User: User) => {
-            User.email = User.email.trim()
-        }
     }
-})
+)
 
-User.belongsTo(Store, { foreignKey: 'storeName'})
-Store.hasMany(User, { foreignKey: 'storeName'})
+User.belongsTo(Store, { foreignKey: 'storeName' })
+Store.hasMany(User, { foreignKey: 'storeName' })
 
 export default User

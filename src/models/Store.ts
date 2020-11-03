@@ -21,30 +21,30 @@ const Store = sequelize.define<store>('stores', {
         validate: {
             is: {
                 args: '^[a-zA-Z0-9_]+$',
-                msg: 'Nome deve ser sem espaços!'
-            }
-        }
+                msg: 'Nome deve ser sem espaços!',
+            },
+        },
     },
     logoLink: {
-      type: DataTypes.STRING,
-      allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     instaLink: {
-      type: DataTypes.STRING,
-      allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     insta: {
-      type: DataTypes.STRING,
-      allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     whats: {
-      type: DataTypes.STRING,
-      allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     whatsLinkToMsg: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    }
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 })
 
 export default Store

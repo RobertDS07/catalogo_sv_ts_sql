@@ -16,40 +16,40 @@ interface Product extends Model {
 const Product = sequelize.define<Product>('products', {
     fotourl: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     name: {
         type: DataTypes.STRING,
         allowNull: false,
         set(val: string) {
             this.setDataValue('name', val.trim().toLowerCase())
-        }
+        },
     },
     price: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
     },
     size: {
         type: DataTypes.STRING,
         allowNull: false,
         set(val: string) {
             this.setDataValue('size', val.trim().toLowerCase())
-        }
+        },
     },
     category: {
         type: DataTypes.STRING,
         allowNull: false,
         set(val: string) {
             this.setDataValue('category', val.trim().toLowerCase())
-        }
+        },
     },
     description: {
         type: DataTypes.STRING,
-        allowNull: true
-    }
+        allowNull: true,
+    },
 })
 
-Product.belongsTo(Store, { foreignKey: 'storeName'})
-Store.hasMany(Product, { foreignKey: 'storeName'})
+Product.belongsTo(Store, { foreignKey: 'storeName' })
+Store.hasMany(Product, { foreignKey: 'storeName' })
 
 export default Product
