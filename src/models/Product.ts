@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize'
 import sequelize from '../database'
+
 import Store from './Store'
 
 interface Product extends Model {

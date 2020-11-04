@@ -1,8 +1,8 @@
-import { Op } from "sequelize"
-import Product from "../../../models/Product"
+import { Op } from 'sequelize'
+import Product from '../../../models/Product'
 
-import verifyData from "../../../utils/verifyData"
-import verifyToken from "../../../utils/verifyToken"
+import verifyData from '../../../utils/verifyData'
+import verifyToken from '../../../utils/verifyToken'
 
 interface getProducts {
     storeName: string
@@ -17,11 +17,11 @@ interface createProduct {
     storeName: string
     token: string
     data: {
-        fotourl: string,
-        name: string,
-        size: string,
-        category: string,
-        price: number,
+        fotourl: string
+        name: string
+        size: string
+        category: string
+        price: number
         description?: string
     }
 }
@@ -31,11 +31,11 @@ interface updateProduct {
     token: string
     id: number
     data: {
-        fotourl?: string,
-        name?: string,
-        size?: string,
-        category?: string,
-        price?: number,
+        fotourl?: string
+        name?: string
+        size?: string
+        category?: string
+        price?: number
         description?: string
     }
 }
@@ -55,42 +55,112 @@ interface getProduct {
     id: number
 }
 
-export const resolvers = {
-    getProducts: async ({ storeName, offset, limit, search, sort, category }: getProducts) => {
+const resolvers = {
+    getProducts: async ({
+        storeName,
+        offset,
+        limit,
+        search,
+        sort,
+        category,
+    }: getProducts) => {
         try {
-            if (!!search) search = search.trim().toLocaleLowerCase()
-            if (!!category) category = category.trim().toLocaleLowerCase()
+            if (search) search = search.trim().toLocaleLowerCase()
+            if (category) category = category.trim().toLocaleLowerCase()
             if (!search) search = ''
 
-            const { rows: products, count } = !sort ? !category ? await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['id', 'DESC']] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['id', 'DESC']] }) : !category ? await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { name: { [Op.like]: `%${search}%` } }] }, offset, limit, order: [['price', sort]] }) : await Product.findAndCountAll({ where: { [Op.and]: [{ storeName }, { category }, { name: { [Op.like]: `%${search}%` } }, { category }] }, offset, limit, order: [['price', sort]] })
+            const { rows: products, count } = !sort
+                ? !category
+                    ? await Product.findAndCountAll({
+                          where: {
+                              [Op.and]: [
+                                  { storeName },
+                                  { name: { [Op.like]: `%${search}%` } },
+                              ],
+                          },
+                          offset,
+                          limit,
+                          order: [['id', 'DESC']],
+                      })
+                    : await Product.findAndCountAll({
+                          where: {
+                              [Op.and]: [
+                                  { storeName },
+                                  { category },
+                                  { name: { [Op.like]: `%${search}%` } },
+                              ],
+                          },
+                          offset,
+                          limit,
+                          order: [['id', 'DESC']],
+                      })
+                : !category
+                ? await Product.findAndCountAll({
+                      where: {
+                          [Op.and]: [
+                              { storeName },
+                              { name: { [Op.like]: `%${search}%` } },
+                          ],
+                      },
+                      offset,
+                      limit,
+                      order: [['price', sort]],
+                  })
+                : await Product.findAndCountAll({
+                      where: {
+                          [Op.and]: [
+                              { storeName },
+                              { category },
+                              { name: { [Op.like]: `%${search}%` } },
+                              { category },
+                          ],
+                      },
+                      offset,
+                      limit,
+                      order: [['price', sort]],
+                  })
 
             return { products, count }
         } catch (e) {
-            if (!!e) e = new Error('Ocorreu um erro, tente novamente, se persistir contate o dono do site.')
+            if (e)
+                e = new Error(
+                    'Ocorreu um erro, tente novamente, se persistir contate o dono do site.'
+                )
             return e
         }
     },
     getProduct: async ({ id, storeName }: getProduct) => {
         try {
-            const product = Product.findOne({ where: { [Op.and]: [{ id }, { storeName }] } })
+            const product = Product.findOne({
+                where: { [Op.and]: [{ id }, { storeName }] },
+            })
 
-            if(!product) throw new Error('')
+            if (!product) throw new Error('')
 
             return product
         } catch (e) {
-            if (!!e) e = new Error('Ocorreu um erro, tente novamente, se persistir contate o dono do site.')
+            if (e)
+                e = new Error(
+                    'Ocorreu um erro, tente novamente, se persistir contate o dono do site.'
+                )
             return e
         }
     },
     getCategories: async ({ storeName }: getCategories) => {
         try {
-            const categories = await Product.findAll({ where: { storeName }, group: 'category' })
+            const categories = await Product.findAll({
+                where: { storeName },
+                group: 'category',
+            })
 
             if (!categories) throw new Error('')
 
             return categories
         } catch (e) {
-            if (!!e) e = new Error('Ocorreu um erro, tente novamente, se persistire contate o dono do site.')
+            if (e)
+                e = new Error(
+                    'Ocorreu um erro, tente novamente, se persistire contate o dono do site.'
+                )
             return e
         }
     },
@@ -100,16 +170,24 @@ export const resolvers = {
 
             if (!verifiedToken) throw new Error('Faça o login novamente.')
 
-            //se retornar falso eu tiro o state admin true no front
+            // se retornar falso eu tiro o state admin true no front
             if (verifiedToken.user.storeName !== storeName) return false
 
-            if (data.description === undefined || data.description.trim() === '' || data.description === null) delete data.description
+            if (
+                data.description === undefined ||
+                data.description.trim() === '' ||
+                data.description === null
+            )
+                delete data.description
 
             verifyData(data)
 
             const createdProduct = await Product.create({ storeName, ...data })
 
-            if (!createdProduct) throw new Error('Houve algo errado no processo de cadastrar o produto, tente novamente, se persistir contate o dono do site.')
+            if (!createdProduct)
+                throw new Error(
+                    'Houve algo errado no processo de cadastrar o produto, tente novamente, se persistir contate o dono do site.'
+                )
 
             return true
         } catch (e) {
@@ -122,14 +200,20 @@ export const resolvers = {
 
             if (!verifiedToken) throw new Error('Faça o login novamente.')
 
-            //se retornar falso eu tiro o state admin true no front
+            // se retornar falso eu tiro o state admin true no front
             if (verifiedToken.user.storeName !== storeName) return false
 
-            if (!data) throw new Error('Por favor preencha pelo menos um campo.')
+            if (!data)
+                throw new Error('Por favor preencha pelo menos um campo.')
 
-            const updatedProduct = await Product.update(data, { where: { [Op.and]: [{ id }, { storeName }] } })
+            const updatedProduct = await Product.update(data, {
+                where: { [Op.and]: [{ id }, { storeName }] },
+            })
 
-            if (!updatedProduct) throw new Error('Houve algo errado no processo de cadastrar o produto, tente novamente, se persistir contate o dono do site.')
+            if (!updatedProduct)
+                throw new Error(
+                    'Houve algo errado no processo de cadastrar o produto, tente novamente, se persistir contate o dono do site.'
+                )
 
             return true
         } catch (e) {
@@ -142,16 +226,23 @@ export const resolvers = {
 
             if (!verifiedToken) throw new Error('Faça o login novamente.')
 
-            //se retornar falso eu tiro o state admin true no front
+            // se retornar falso eu tiro o state admin true no front
             if (verifiedToken.user.storeName !== storeName) return false
 
-            const deletedProduct = await Product.destroy({ where: { [Op.and]: [{ id }, { storeName }] } })
+            const deletedProduct = await Product.destroy({
+                where: { [Op.and]: [{ id }, { storeName }] },
+            })
 
-            if (!deletedProduct) throw new Error('Houve algo errado no processo de deletar o produto, tente novamente, se persistir contate o dono do site.')
+            if (!deletedProduct)
+                throw new Error(
+                    'Houve algo errado no processo de deletar o produto, tente novamente, se persistir contate o dono do site.'
+                )
 
             return true
         } catch (e) {
             return e
         }
-    }
+    },
 }
+
+export default resolvers

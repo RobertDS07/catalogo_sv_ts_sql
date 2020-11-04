@@ -1,6 +1,4 @@
-import { buildSchema } from "graphql";
-
-export const schema = buildSchema(`
+const schema = `
     type Query {
         getProducts(storeName: String! offset: Int! limit: Int! sort: String search: String category: String): Products!
         getProduct(storeName: String! id: Int!): Product!
@@ -49,4 +47,6 @@ export const schema = buildSchema(`
     type ProductsOnlyCategories {
         category: String!
     }
-`)
+`
+
+export default schema

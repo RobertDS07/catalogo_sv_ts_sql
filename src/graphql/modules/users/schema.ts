@@ -1,4 +1,4 @@
-export const schema = `
+const schema = `
 type Query {
     login(data: loginInput): Token
     verifyToken(storeName: String, token: String!): VerifyToken
@@ -35,3 +35,5 @@ type VerifyToken {
     admin: Boolean!
 }
 `
+
+export default schema

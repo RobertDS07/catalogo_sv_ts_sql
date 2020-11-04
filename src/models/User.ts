@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize'
 import bcrypt from 'bcryptjs'
 import sequelize from '../database'
+
 import Store from './Store'
 
 interface User extends Model {
@@ -50,9 +51,9 @@ const User = sequelize.define<User>(
     {
         hooks: {
             beforeSave: async (user: User) => {
-                const userSaved = user
-                if (userSaved.storeName) userSaved.isAdmin = true
-                userSaved.password = await bcrypt.hash(userSaved.password, 10)
+                const newUser = user
+                if (newUser.storeName) newUser.isAdmin = true
+                newUser.password = await bcrypt.hash(newUser.password, 10)
             },
             beforeCreate: (user: User) => {
                 const newUser = user

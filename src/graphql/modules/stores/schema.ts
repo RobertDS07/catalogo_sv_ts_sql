@@ -1,6 +1,4 @@
-import { buildSchema } from "graphql";
-
-export const schema = buildSchema(`
+const schema = `
 type Query {
     storeNamesToLink: [StoreName!]!
     storeInfo(storeName: String!): Store!
@@ -31,4 +29,6 @@ type Store {
     whats: String!
     whatsLinkToMsg: String!
 }
-`)
+`
+
+export default schema

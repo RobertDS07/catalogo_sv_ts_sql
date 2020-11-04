@@ -34,6 +34,14 @@
          ],
          "no-redeclare": "off",
          "no-unused-vars": "off",
-         "no-restricted-syntax": "off"
+         "no-restricted-syntax": "off",
+         "no-shadow": "off",
+         "no-ex-assign": "off",
+         "no-nested-ternary": "off",
+         "no-param-reassign": "off",
+         "no-unused-expressions": "off",
+         "no-undef": "off",
+         "no-await-in-loop": "off",
+         "import/no-extraneous-dependencies": ["error", {"devDependencies": ["src/config/database.*"]}]
     }
 }
