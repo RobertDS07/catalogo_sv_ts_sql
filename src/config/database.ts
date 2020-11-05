@@ -1,9 +1,9 @@
-import dotenv from 'dotenv'
+// import dotenv from 'dotenv'
 
-if (dotenv)
-    dotenv.config({
-        path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-    })
+// if (dotenv)
+//     dotenv.config({
+//         path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+//     })
 
 module.exports = {
     dialect: process.env.DB_DIALECT || 'mysql',
@@ -11,7 +11,7 @@ module.exports = {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    storage: './__test__/database.sqlite',
+    // storage: './__test__/database.sqlite',
     logging: false,
     define: {
         timestamps: true,
