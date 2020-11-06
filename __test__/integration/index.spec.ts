@@ -50,14 +50,14 @@ describe('Stores', () => {
     it('Should return all data of one store that i define with storeNameToLink', async () => {
         expect(await storeInfo({ storeName: 'loja1' })).toHaveProperty(
             'storeNameToLink',
-            'loja1'
+            'loja1',
         )
     })
     it('Should return a error, only to test ;)', async () => {
         expect(await storeInfo({ storeName: 'loja11' })).toStrictEqual(
             Error(
-                'Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.'
-            )
+                'Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.',
+            ),
         )
     })
 })
@@ -97,7 +97,7 @@ describe('Admin', () => {
 
         expect(await verifyToken({ storeName, token })).toHaveProperty(
             'admin',
-            true
+            true,
         )
     })
     it('Should do the same of the last test, but will throw a error beacause the user arent admin of this store', async () => {
@@ -107,7 +107,7 @@ describe('Admin', () => {
 
         expect(await verifyToken({ storeName, token })).toHaveProperty(
             'admin',
-            false
+            false,
         )
     })
     it('Should create a product, the request must contain storeName, token and obviously data of product', async () => {
@@ -148,12 +148,12 @@ describe('Admin', () => {
                 token,
                 id: productId,
                 data: dataUpdate,
-            })
+            }),
         ).toBeTruthy()
 
         expect(await Product.findByPk(productId)).toHaveProperty(
             'name',
-            'nameupdated'
+            'nameupdated',
         )
     })
     it('Should delete a product', async () => {
@@ -163,7 +163,7 @@ describe('Admin', () => {
         const productId = 1
 
         expect(
-            await deleteProduct({ storeName, token, id: productId })
+            await deleteProduct({ storeName, token, id: productId }),
         ).toBeTruthy()
         expect(await Product.findByPk(1)).toBeFalsy()
     })
@@ -274,7 +274,7 @@ describe('Products', () => {
 
         let expected
 
-        products.forEach((e) => {
+        products.forEach(e => {
             if (e.price > lastNumber) expected = true
 
             lastNumber = e.price
@@ -328,7 +328,7 @@ describe('Products', () => {
 
         const { products } = getAllProducts
 
-        const expected = products.every((e) => e.category === 'othercategory')
+        const expected = products.every(e => e.category === 'othercategory')
 
         expect(expected).toBeTruthy()
     })
@@ -360,7 +360,7 @@ describe('Users', () => {
             }
 
             expect(await createUser(data)).toStrictEqual(
-                Error('Senha deve conter 5 caracteres.')
+                Error('Senha deve conter 5 caracteres.'),
             )
         })
         it('Should return a error if alredy exist a user with same email', async () => {
@@ -373,7 +373,7 @@ describe('Users', () => {
             }
 
             expect(await createUser(data)).toStrictEqual(
-                Error('Este email já esta em uso.')
+                Error('Este email já esta em uso.'),
             )
         })
     })
@@ -387,7 +387,7 @@ describe('Users', () => {
                 },
             }
             expect(await login(data)).toStrictEqual(
-                Error('Credenciais inválidas.')
+                Error('Credenciais inválidas.'),
             )
         })
         it('Should return a token if correct login', async () => {

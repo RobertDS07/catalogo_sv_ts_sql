@@ -124,7 +124,7 @@ const resolvers = {
         } catch (e) {
             if (e)
                 e = new Error(
-                    'Ocorreu um erro, tente novamente, se persistir contate o dono do site.'
+                    'Ocorreu um erro, tente novamente, se persistir contate o dono do site.',
                 )
             return e
         }
@@ -141,7 +141,7 @@ const resolvers = {
         } catch (e) {
             if (e)
                 e = new Error(
-                    'Ocorreu um erro, tente novamente, se persistir contate o dono do site.'
+                    'Ocorreu um erro, tente novamente, se persistir contate o dono do site.',
                 )
             return e
         }
@@ -150,17 +150,16 @@ const resolvers = {
         try {
             const categories = await Product.findAll({
                 where: { storeName },
-                group: 'category',
+                group: ['category', 'id'],
             })
 
             if (!categories) throw new Error('')
 
             return categories
         } catch (e) {
-            if (e)
-                e = new Error(
-                    'Ocorreu um erro, tente novamente, se persistire contate o dono do site.'
-                )
+            e = new Error(
+                'Ocorreu um erro, tente novamente, se persistire contate o dono do site.',
+            )
             return e
         }
     },
@@ -170,7 +169,6 @@ const resolvers = {
 
             if (!verifiedToken) throw new Error('Faça o login novamente.')
 
-            // se retornar falso eu tiro o state admin true no front
             if (verifiedToken.user.storeName !== storeName) return false
 
             if (
@@ -186,7 +184,7 @@ const resolvers = {
 
             if (!createdProduct)
                 throw new Error(
-                    'Houve algo errado no processo de cadastrar o produto, tente novamente, se persistir contate o dono do site.'
+                    'Houve algo errado no processo de cadastrar o produto, tente novamente, se persistir contate o dono do site.',
                 )
 
             return true
@@ -212,7 +210,7 @@ const resolvers = {
 
             if (!updatedProduct)
                 throw new Error(
-                    'Houve algo errado no processo de cadastrar o produto, tente novamente, se persistir contate o dono do site.'
+                    'Houve algo errado no processo de cadastrar o produto, tente novamente, se persistir contate o dono do site.',
                 )
 
             return true
@@ -235,7 +233,7 @@ const resolvers = {
 
             if (!deletedProduct)
                 throw new Error(
-                    'Houve algo errado no processo de deletar o produto, tente novamente, se persistir contate o dono do site.'
+                    'Houve algo errado no processo de deletar o produto, tente novamente, se persistir contate o dono do site.',
                 )
 
             return true
