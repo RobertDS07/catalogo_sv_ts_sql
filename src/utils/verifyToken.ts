@@ -9,7 +9,7 @@ interface decodedToken {
 }
 
 const verifyToken = (token: string) =>
-    new Promise<decodedToken>((res) =>
+    new Promise<decodedToken>(res =>
         jwt.verify(
             token,
             process.env.SECRET || 'asjhd7h12d1',
@@ -17,8 +17,8 @@ const verifyToken = (token: string) =>
                 if (err) return res()
 
                 return res(decoded as decodedToken)
-            }
-        )
+            },
+        ),
     )
 
 export default verifyToken

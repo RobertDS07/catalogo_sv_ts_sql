@@ -15,7 +15,7 @@ app.use(
         schema,
         rootValue: resolvers,
         graphiql: false,
-    })
+    }),
 )
 
 app.listen(process.env.PORT || 8081)

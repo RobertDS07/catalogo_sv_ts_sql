@@ -36,7 +36,7 @@ const resolvers = {
         } catch (e) {
             if (e)
                 e = new Error(
-                    'Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.'
+                    'Algo inesperado ocorreu por favore tente novamente, se o erro persistir conatate o dono do site.',
                 )
             return e
         }

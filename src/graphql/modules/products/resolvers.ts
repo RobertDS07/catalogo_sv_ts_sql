@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, fn, col } from 'sequelize'
 import Product from '../../../models/Product'
 
 import verifyData from '../../../utils/verifyData'
@@ -150,7 +150,7 @@ const resolvers = {
         try {
             const categories = await Product.findAll({
                 where: { storeName },
-                group: ['category', 'id'],
+                attributes: [[fn('DISTINCT', col('category')), 'category']],
             })
 
             if (!categories) throw new Error('')
